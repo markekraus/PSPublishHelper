@@ -73,18 +73,13 @@ function Publish-PSModuleNuget {
     
     process {
         if($PSCmdlet.ParameterSetName -eq 'NameAndVersion') {
-            $InputObject = Get-Module -ListAvailable -Name $Name |
-                Where-Object {$_.Version.ToString() -eq $RequiredVersion} |
-                Select-Object -First 1
-            if (-not $InputObject) {
-                $ErrorRecord = [System.Management.Automation.ErrorRecord]::new(
-                    [System.Management.Automation.ItemNotFoundException]::new("Unable to find Module $Name Version $RequiredVersion"),
-                    "ModuleNotFound",
-                    [System.Management.Automation.ErrorCategory]::InvalidArgument,
-                    $null
-                )
-                $PSCmdlet.ThrowTerminatingError($ErrorRecord)
+            $Params = @{
+                Cmdlet = $PSCmdlet
+                Name = $Name
+                RequiredVersion = $RequiredVersion
+                ErrorAction = 'stop'
             }
+            $InputObject = Resolve-PSModule @Params
         }
 
         $Params = @{
@@ -96,8 +91,15 @@ function Publish-PSModuleNuget {
             LicenseUri = $LicenseUri
         }
         $PSData = Resolve-PSData @Params
+
+        $TagsText = Resolve-PSModuleTags -Module $PSModuleInfo -Tags $PSData.Tags
+        $DependencyText = @(
+            $InputObject | Resolve-PSModuleDependency | Format-PSModuleDependency
+        ) -Join ([Environment]::NewLine)
+
+        
     }
-    
+
     end {
     }
 }

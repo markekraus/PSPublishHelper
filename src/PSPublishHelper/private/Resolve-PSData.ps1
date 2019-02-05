@@ -28,6 +28,7 @@ function Resolve-PSData {
             LicenseUri = $LicenseUri
             IconUri = $IconUri
             ProjectUri = $ProjectUri
+            Prerelease = $null
         }
         foreach ($item in $PSData.GetEnumerator()) {
             $key = $item.key
