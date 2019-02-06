@@ -37,6 +37,7 @@ function Publish-PSModuleNuget {
         [ValidateNotNullOrEmpty()]
         [ValidateScript({
             if(-not (Test-Path -PathType Container -Path $_)){throw}
+            else {$true}
         })]
         [string]
         $DestinationPath,
@@ -85,19 +86,14 @@ function Publish-PSModuleNuget {
         $Params = @{
             IconUri = $IconUri
             ReleaseNotes = $ReleaseNotes
-            PSModuleInfo = $InputObject
+            Module = $InputObject
             Tags = $Tags
             ProjectUri = $ProjectUri
             LicenseUri = $LicenseUri
         }
         $PSData = Resolve-PSData @Params
 
-        $TagsText = Resolve-PSModuleTags -Module $PSModuleInfo -Tags $PSData.Tags
-        $DependencyText = @(
-            $InputObject | Resolve-PSModuleDependency | Format-PSModuleDependency
-        ) -Join ([Environment]::NewLine)
-
-        
+        $NuspecContents = Get-NuspecContents -Module $InputObject -PSData $PSData
     }
 
     end {

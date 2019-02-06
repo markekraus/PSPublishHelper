@@ -3,7 +3,7 @@ function Resolve-PSData {
     [CmdletBinding()]
     param (
         [PSModuleInfo]
-        $PSModuleInfo,
+        $Module,
 
         [string]
         $ReleaseNotes,
@@ -29,12 +29,13 @@ function Resolve-PSData {
             IconUri = $IconUri
             ProjectUri = $ProjectUri
             Prerelease = $null
+            RequireLicenseAcceptance = $null
         }
         foreach ($item in $PSData.GetEnumerator()) {
             $key = $item.key
             $Result[$key] = $item.value
             if (-not $item.value) {
-                $Result[$key] = $PSModuleInfo.PrivateData.PSdata.$key
+                $Result[$key] = $Module.PrivateData.PSdata.$key
             }
         }
         $Result
