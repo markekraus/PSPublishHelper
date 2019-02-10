@@ -65,11 +65,16 @@ function Publish-PSModuleNuget {
         [Parameter(Mandatory = $false, ParameterSetName = 'PSModuleInfo')]
         [Parameter(Mandatory = $false, ParameterSetName = 'NameAndVersion')]
         [Uri]
-        $ProjectUri
+        $ProjectUri,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'PSModuleInfo')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'NameAndVersion')]
+        [Switch]
+        $PassThru
     )
     
     begin {
-        $TempPath = [System.IO.Path]::GetTempPath()
+        $Nuget = Resolve-NugetCommand -Cmdlet $PSCmdlet -ErrorAction Stop
     }
     
     process {
@@ -93,9 +98,36 @@ function Publish-PSModuleNuget {
         }
         $PSData = Resolve-PSData @Params
 
-        $NuspecContents = Get-NuspecContents -Module $InputObject -PSData $PSData
-    }
+        $Params = @{
+            Module = $InputObject
+            PSData = $PSData
+            ErrorAction = 'stop'
+        }
+        $NuspecContents = Get-NuspecContents @Params
 
-    end {
+        $TempPath = $InputObject | Get-TemporaryPath
+        try {
+            Copy-PSModule -Module $InputObject -Path $TempPath
+            $NuspecPath = Get-NuspecFilePath -Module $InputObject -Path $TempPath
+            $NuspecContents | Set-Content -Path $NuspecPath -Force -Confirm:$false -WhatIf:$false
+            $NupkgFilePath = Get-NupkgFilePath -Module $InputObject -Path $DestinationPath
+            Push-Location -StackName PSPublishHelperNugetPack -Path $TempPath
+            $Output = & $Nuget pack $NuspecPath -OutputDirectory $DestinationPath -BasePath $TempPath -Verbosity quiet -NonInteractive
+            Write-Verbose "Nuget Pack Output: $Output"
+        }
+        finally {
+            Pop-Location -StackName PSPublishHelperNugetPack
+            $Params = @{
+                Path = Split-path -Parent $TempPath
+                Recurse = $true
+                Force = $true
+                ErrorAction = 'SilentlyContinue'
+            }
+            Microsoft.PowerShell.Management\Remove-Item @Params
+        }
+
+        if($PassThru) {
+            Get-item -Path $NupkgFilePath -ErrorAction SilentlyContinue
+        }
     }
 }

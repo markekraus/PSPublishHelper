@@ -29,7 +29,7 @@ function Resolve-PSModuleTags {
             $null = $TagsList.add(('PSCommand_{0}' -f $Command))
         }
 
-        foreach ($DscResource in (Get-ExportedDscResources -Module $Module)) {
+        foreach ($DscResource in (Get-ExportedDscResources -Module $Module -ErrorAction SilentlyContinue)) {
             $null = $TagsList.Add('PSIncludes_DscResource')
             $null = $TagsList.add(('PSDscResource_{0}' -f $DscResource))
         }

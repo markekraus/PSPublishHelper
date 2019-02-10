@@ -2,12 +2,14 @@ function Format-PSModuleDependency {
     [OutputType([string])]
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory, ValueFromPipeline)]
-        [ValidateNotNull()]
+        [Parameter(ValueFromPipeline)]
         [Microsoft.PowerShell.Commands.ModuleSpecification]
         $Dependency
     )
     process {
+        if (-not $Dependency) {
+            return
+        }
         $Version = [string]::Empty
         # Version format in NuSpec:
         # "[2.0]" --> (== 2.0) Required Version

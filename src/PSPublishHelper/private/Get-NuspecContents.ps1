@@ -16,13 +16,18 @@ function Get-NuspecContents {
 
         $RequireLicenseAcceptanceText = ([bool]$PSData.RequireLicenseAcceptance).ToString().ToLower() 
 
+        $Description = $Module.Description
+        if ([string]::IsNullOrWhiteSpace($Description)) {
+            $Description = $Module.Name
+        }
+
         $ArgumentList = [System.Collections.Generic.List[string]]::new()
         @(
             $Module.Name,
             $VersionText,
             $Module.Author,
             $Module.CompanyName,
-            $Module.Description,
+            $Description,
             $Module.ReleaseNotes,
             $RequireLicenseAcceptanceText,
             $Module.Copyright,

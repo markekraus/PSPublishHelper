@@ -8,7 +8,7 @@ function Resolve-PSModuleDependency {
     )
     process {
         # The manifest contains the actual ModuleSpec used for Version requirements
-        $ModuleData = Import-PowerShellDataFile -Path $Module.Path 
+        $ModuleData = $Module | Get-PSModuleManifestData
 
         $ModuleData.RequiredModules | Resolve-PSModuleInfo
 
