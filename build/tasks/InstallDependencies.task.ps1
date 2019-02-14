@@ -1,0 +1,1 @@
+Task InstallDependencies RegisterPSRepository, InstallDependenciesPS, ImportPSModules

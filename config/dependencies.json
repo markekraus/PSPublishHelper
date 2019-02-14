@@ -1,0 +1,16 @@
+{
+    "PowerShell": [
+        {
+            "Name": "Configuration",
+            "Version": "1.3.1",
+            "Phases": ["Build"]
+        }
+    ],
+    "choco": [
+        {
+            "Name": "GitVersion.Portable",
+            "Version": "4.0.0",
+            "Phases": ["Build"]
+        }
+    ]
+}
