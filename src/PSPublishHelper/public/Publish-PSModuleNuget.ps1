@@ -40,7 +40,7 @@ function Publish-PSModuleNuget {
             else {$true}
         })]
         [string]
-        $DestinationPath,
+        $OutputPath,
 
         [Parameter(Mandatory = $false, ParameterSetName = 'PSModuleInfo')]
         [Parameter(Mandatory = $false, ParameterSetName = 'NameAndVersion')]
@@ -107,12 +107,12 @@ function Publish-PSModuleNuget {
 
         $TempPath = $InputObject | Get-TemporaryPath
         try {
-            Copy-PSModule -Module $InputObject -Path $TempPath
-            $NuspecPath = Get-NuspecFilePath -Module $InputObject -Path $TempPath
-            $NuspecContents | Set-Content -Path $NuspecPath -Force -Confirm:$false -WhatIf:$false
-            $NupkgFilePath = Get-NupkgFilePath -Module $InputObject -Path $DestinationPath
-            Push-Location -StackName PSPublishHelperNugetPack -Path $TempPath
-            $Output = & $Nuget pack $NuspecPath -OutputDirectory $DestinationPath -BasePath $TempPath -Verbosity quiet -NonInteractive
+            Copy-PSModule -Module $InputObject -Path $TempPath -ErrorAction Stop
+            $NuspecPath = Get-NuspecFilePath -Module $InputObject -Path $TempPath -ErrorAction Stop
+            $NuspecContents | Set-Content -Path $NuspecPath -Force -Confirm:$false -WhatIf:$false -ErrorAction Stop
+            $NupkgFilePath = Get-NupkgFilePath -Module $InputObject -Path $OutputPath -ErrorAction Stop
+            Push-Location -StackName PSPublishHelperNugetPack -Path $TempPath -ErrorAction Stop
+            $Output = & $Nuget pack $NuspecPath -OutputDirectory $OutputPath -BasePath $TempPath -Verbosity quiet -NonInteractive
             Write-Verbose "Nuget Pack Output: $Output"
         }
         finally {

@@ -28,9 +28,23 @@ function Copy-PSModule {
         Microsoft.PowerShell.Management\Get-ChildItem $Module.ModuleBase -recurse |
             ForEach-Object {
                 if ($_.PSIsContainer) {
-                    $_ |Microsoft.PowerShell.Management\Copy-Item -Force -Confirm:$false -WhatIf:$false -Recurse -Container -Destination $Path
+                    $Params = @{
+                        Force = $true
+                        Confirm = $false
+                        WhatIf = $false
+                        Recurse = $true
+                        Container = $true
+                        Destination = $Path
+                    }
+                    $_ | Microsoft.PowerShell.Management\Copy-Item @Params
                 } else {
-                    $_ |Microsoft.PowerShell.Management\Copy-Item -Force -Confirm:$false -WhatIf:$false -Destination $Path
+                    $Params = @{
+                        Force = $true
+                        Confirm = $false
+                        WhatIf = $false
+                        Destination = $Path
+                    }
+                    $_ | Microsoft.PowerShell.Management\Copy-Item @Params
                 }
             }
     }
