@@ -34,8 +34,10 @@ function Resolve-PSData {
         foreach ($item in $PSData.GetEnumerator()) {
             $key = $item.key
             $Result[$key] = $item.value
-            if (-not $item.value) {
+            if (-not $item.value -and $key -ne 'Prerelease') {
                 $Result[$key] = $Module.PrivateData.PSdata.$key
+            } elseif (-not $item.value -and $key -eq 'Prerelease') {
+                $Result[$key] = $Module.PrivateData.$key
             }
         }
         $Result
