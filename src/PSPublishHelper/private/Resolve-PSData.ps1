@@ -37,8 +37,9 @@ function Resolve-PSData {
             if (-not $item.value -and $key -ne 'Prerelease') {
                 $Result[$key] = $Module.PrivateData.PSdata.$key
             } elseif (-not $item.value -and $key -eq 'Prerelease') {
-                $Result[$key] = $Module.PrivateData.$key
+                $Result[$key] = $Module.PrivateData.PSData.$key
             }
+            Write-Verbose "$($key): $($Result[$key])"
         }
         $Result
     }

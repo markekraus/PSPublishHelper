@@ -10,7 +10,7 @@ Param(
 
     [Parameter()]
     [string]
-    $Phase,
+    $Phase = 'build',
 
     [Parameter()]
     [string]

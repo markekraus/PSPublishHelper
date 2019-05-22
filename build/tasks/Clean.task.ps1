@@ -1,4 +1,4 @@
 Task Clean Initialize, {
     'Removing OutputPath contents'
-    Get-ChildItem -Path $OutputPath -Force | Remove-Item -Recurse -Force -Verbose
+    Get-ChildItem -Path $OutputPath -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -Verbose
 }
