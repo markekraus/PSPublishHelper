@@ -314,7 +314,12 @@ function Publish-PSArtifactUtility
             $Tags += $PSModuleInfo.ExportedCommands.Keys | Microsoft.PowerShell.Core\ForEach-Object { "$($script:Command)_$_" }
         }
 
-        $dscResourceNames = Get-ExportedDscResources -PSModuleInfo $PSModuleInfo
+        if(!$IsCoreCLR) {
+          $dscResourceNames = Get-ExportedDscResources -PSModuleInfo $PSModuleInfo
+        } else {
+          Write-Verbose 'Skipping DSC resource enumeration as it is not supported on PS Core.'
+          Write-Verbose 'Please use Windows PowerShell to build DSC modules.'
+        }
         if($dscResourceNames)
         {
             $Tags += "$($script:Includes)_DscResource"

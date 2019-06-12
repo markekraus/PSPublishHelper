@@ -29,10 +29,16 @@ function Resolve-PSModuleTags {
             $null = $TagsList.add(('PSCommand_{0}' -f $Command))
         }
 
-        foreach ($DscResource in (Get-ExportedDscResources -Module $Module -ErrorAction SilentlyContinue)) {
-            $null = $TagsList.Add('PSIncludes_DscResource')
-            $null = $TagsList.add(('PSDscResource_{0}' -f $DscResource))
+        if(!$IsCoreCLR) {
+          foreach ($DscResource in (Get-ExportedDscResources -Module $Module -ErrorAction SilentlyContinue)) {
+              $null = $TagsList.Add('PSIncludes_DscResource')
+              $null = $TagsList.add(('PSDscResource_{0}' -f $DscResource))
+          }
+        } else {
+          Write-Verbose 'Skipping DSC resource enumeration as it is not supported on PS Core.'
+          Write-Verbose 'Please use Windows PowerShell to build DSC modules.'
         }
+
 
         foreach ($Role in (Get-AvailableRoleCapabilityName -Module $Module)) {
             $null = $TagsList.Add('PSIncludes_RoleCapability')
