@@ -75,7 +75,9 @@ function Publish-PSModuleNuget {
     
     begin {
         $Nuget = Resolve-NugetCommand -Cmdlet $PSCmdlet -ErrorAction Stop
-        Write-Verbose "Nuegt found at $($Nuget.Path)"
+        Write-Verbose "Nuget found at $($Nuget.Path)"
+        $OutputPath = Convert-Path $OutputPath -ErrorAction Stop
+        Write-Verbose "Output Path: $OutputPath"
     }
     
     process {
@@ -89,7 +91,7 @@ function Publish-PSModuleNuget {
             $InputObject = Resolve-PSModule @Params
         }
 
-        Write-Verbose "Using Module from $($Module.ModuleBase)"
+        Write-Verbose "Using Module from $($InputObject.ModuleBase)"
 
         $Params = @{
             IconUri = $IconUri
@@ -115,7 +117,7 @@ function Publish-PSModuleNuget {
             $NuspecContents | Set-Content -Path $NuspecPath -Force -Confirm:$false -WhatIf:$false -ErrorAction Stop
             $NupkgFilePath = Get-NupkgFilePath -Module $InputObject -Path $OutputPath -ErrorAction Stop
             Push-Location -StackName PSPublishHelperNugetPack -Path $TempPath -ErrorAction Stop
-            $Output = & $Nuget pack $NuspecPath -OutputDirectory $OutputPath -BasePath $TempPath -Verbosity quiet -NonInteractive -NoDefaultExcludes
+            $Output = & $Nuget pack $NuspecPath -OutputDirectory $OutputPath -BasePath $TempPath -Verbosity detailed -NonInteractive -NoDefaultExcludes
             Write-Verbose "Nuget Pack Output:"
             foreach($Line in $Output) {
                 if($Line -notmatch 'NU5110|NU5111'){
