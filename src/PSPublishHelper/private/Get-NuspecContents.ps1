@@ -14,7 +14,7 @@ function Get-NuspecContents {
 
         $TagsText = Resolve-PSModuleTags -Module $Module -Tags $PSData.Tags
 
-        $RequireLicenseAcceptanceText = ([bool]$PSData.RequireLicenseAcceptance).ToString().ToLower() 
+        $RequireLicenseAcceptanceText = ([bool]$PSData.RequireLicenseAcceptance).ToString().ToLower()
 
         $Description = $Module.Description
         if ([string]::IsNullOrWhiteSpace($Description)) {
@@ -52,7 +52,7 @@ function Get-NuspecContents {
         $ArgumentList.Add($IconUriText)
 
         $DependencyText = @(
-            $Module | Resolve-PSModuleDependency | Format-PSModuleDependency
+            $Module | Resolve-PSModuleDependency -ExternalModuleDependencies $PSData.ExternalModuleDependencies | Format-PSModuleDependency
         ) -Join ([Environment]::NewLine)
         $ArgumentList.Add($DependencyText)
 
