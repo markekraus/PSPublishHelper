@@ -30,6 +30,7 @@ function Resolve-PSData {
             ProjectUri = $ProjectUri
             Prerelease = $null
             RequireLicenseAcceptance = $null
+            ExternalModuleDependencies = @()
         }
         foreach ($item in $PSData.GetEnumerator()) {
             $key = $item.key

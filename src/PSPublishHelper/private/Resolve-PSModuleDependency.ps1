@@ -4,13 +4,19 @@ function Resolve-PSModuleDependency {
     param (
         [Parameter(Mandatory, ValueFromPipeline)]
         [PSModuleInfo]
-        $Module
+        $Module,
+
+        [String[]]
+        $ExternalModuleDependencies
     )
     process {
         # The manifest contains the actual ModuleSpec used for Version requirements
         $ModuleData = $Module | Get-PSModuleManifestData
 
-        $ModuleData.RequiredModules | Resolve-PSModuleInfo
+        # A module in RequiredModules is not a dependency if it's listed in ExternalModuleDependencies
+        $ModuleData.RequiredModules | Resolve-PSModuleInfo | Where-Object {
+            $_.Name -notin $ExternalModuleDependencies
+        }
 
         $NestModuleInfo = $ModuleData.NestedModules | Resolve-PSModuleInfo
 
