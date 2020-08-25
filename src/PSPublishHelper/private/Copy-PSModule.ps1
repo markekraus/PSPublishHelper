@@ -25,7 +25,7 @@ function Copy-PSModule {
             Force = $true
         }
         $null = Microsoft.PowerShell.Management\New-Item @Params
-        Microsoft.PowerShell.Management\Get-ChildItem $Module.ModuleBase -recurse |
+        Microsoft.PowerShell.Management\Get-ChildItem $Module.ModuleBase |
             ForEach-Object {
                 if ($_.PSIsContainer) {
                     $Params = @{
